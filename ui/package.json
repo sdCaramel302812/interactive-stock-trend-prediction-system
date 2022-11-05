@@ -25,8 +25,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "eslint src --ext .ts,.tsx --fix"
   },
+  "pre-commit": [
+    "eslint",
+    "test"
+  ],
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -48,6 +53,10 @@
   "devDependencies": {
     "@types/chart.js": "^2.9.37",
     "@types/seamless-immutable": "^7.1.16",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "pre-commit": "^1.2.2",
     "typescript": "^4.8.4"
   }
 }
