@@ -1,12 +1,14 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './style/App.css';
+import StockPredictionChart from './component/StockPredictionChart';
+import mockStockPredictionData from './mock/mockStockPredictionData';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <StockPredictionChart {...mockStockPredictionData} />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
