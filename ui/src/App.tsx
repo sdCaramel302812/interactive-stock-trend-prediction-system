@@ -3,23 +3,17 @@ import logo from './logo.svg';
 import './style/App.css';
 import StockPredictionChart from './component/StockPredictionChart';
 import mockStockPredictionData from './mock/mockStockPredictionData';
+import CoefficientChart from './component/CoefficientChart';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <StockPredictionChart {...mockStockPredictionData} />
+        <CoefficientChart/>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          stock prediction chart
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
