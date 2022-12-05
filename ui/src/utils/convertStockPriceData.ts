@@ -1,4 +1,3 @@
-import { time } from 'console';
 import TimeSeriesData from '../type/TimeSeriesData';
 
 export function convertToTimeSeriesData(price: number[], date: string[]): TimeSeriesData[] {

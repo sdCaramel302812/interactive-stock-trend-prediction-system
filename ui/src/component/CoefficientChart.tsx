@@ -1,57 +1,68 @@
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import 'chartjs-plugin-dragdata';
+import { CoefficientData } from '../type/CoefficientData';
 
 
-function CoefficientChart() {
+function CoefficientChart(coefficientData: CoefficientData) {
   const ref = useRef();
-  const chartData = {
-    labels: ['coefficient1', 'coefficient2', 'coefficient3'],
-    datasets: [
-      {
-        label: 'coefficient',
-        data: [0.1, 0.2, 0.3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(255, 205, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(201, 203, 207, 0.2)'
-        ],
-        borderColor: [
-          'rgb(255, 99, 132)',
-          'rgb(255, 159, 64)',
-          'rgb(255, 205, 86)',
-          'rgb(75, 192, 192)',
-          'rgb(54, 162, 235)',
-          'rgb(153, 102, 255)',
-          'rgb(201, 203, 207)'
-        ],
-        borderWidth: 1
-      },
-    ],
-    dragData: true
+
+  const getBackgroundColor = (coefficient: number[]): string[] => {
+    return coefficient.map((value) => {
+      if (value >= 0) {
+        return 'rgba(75, 192, 75, 0.2)';
+      }
+      return 'rgba(255, 99, 132, 0.2)';
+    });
   };
+
+  const getBorderColor = (coefficient: number[]): string[] => {
+    return coefficient.map((value) => {
+      if (value >= 0) {
+        return 'rgb(75, 192, 75)';
+      }
+      return 'rgb(255, 99, 132)';
+    });
+  };
+
+  const getChartData = (coefficientNames: string[], coefficientValues: number[]) => {
+    return {
+      labels: coefficientNames,
+      datasets: [
+        {
+          label: 'drag to modify coefficient',
+          data: coefficientValues,
+          backgroundColor: getBackgroundColor(coefficientValues),
+          borderColor: getBorderColor(coefficientValues),
+          borderWidth: 1
+        },
+      ],
+      dragData: true
+    };
+  };
+
+  const [coefficientNames, setCoefficientNames] = useState<string[]>([...coefficientData.name]);
+  const [coefficientValues, setCoefficientValues] = useState<number[]>([...coefficientData.value]);
+  const [chartData, setChartData] = useState<any>(getChartData(coefficientNames, coefficientValues));
 
   const options = {
     scale: {
       y: {
-        max: 1,
-        min: 0
+        max: 20,
+        min: -20
       }
     },
     plugins: {
       dragData: {
         onDragStart: () => {},
         onDrag: () => {},
-        onDragEnd: () => {}
+        onDragEnd: () => {
+          setChartData(getChartData(coefficientNames, coefficientValues));
+        }
       }
     }
   };
-  
 
   return (
     <div>
@@ -60,7 +71,7 @@ function CoefficientChart() {
         data={chartData}
         // @ts-ignore
         options={options}
-        style={{width: '600px', height: '300px'}}
+        style={{width: '800px', height: '300px'}}
       />
     </div>
   );
