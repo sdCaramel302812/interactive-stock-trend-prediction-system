@@ -3,9 +3,14 @@ import 'chart.js/auto';
 import { useRef, useState } from 'react';
 import 'chartjs-plugin-dragdata';
 import { CoefficientData } from '../type/CoefficientData';
+import { Button } from '@mui/material';
 
+interface CoefficientChartProps {
+  coefficientData: CoefficientData;
+  onRerun: (coefficientChanges: number[]) => void;
+}
 
-function CoefficientChart(coefficientData: CoefficientData) {
+function CoefficientChart(props: CoefficientChartProps) {
   const ref = useRef();
 
   const getBackgroundColor = (coefficient: number[]): string[] => {
@@ -42,8 +47,8 @@ function CoefficientChart(coefficientData: CoefficientData) {
     };
   };
 
-  const [coefficientNames, setCoefficientNames] = useState<string[]>([...coefficientData.name]);
-  const [coefficientValues, setCoefficientValues] = useState<number[]>([...coefficientData.value]);
+  const [coefficientNames, setCoefficientNames] = useState<string[]>([...props.coefficientData.name]);
+  const [coefficientValues, setCoefficientValues] = useState<number[]>([...props.coefficientData.value]);
   const [chartData, setChartData] = useState<any>(getChartData(coefficientNames, coefficientValues));
 
   const options = {
@@ -73,6 +78,12 @@ function CoefficientChart(coefficientData: CoefficientData) {
         options={options}
         style={{width: '800px', height: '300px'}}
       />
+      <Button
+        style={{ marginTop: '10px' }}
+        variant="contained"
+        color="success"
+        onClick={() => { props.onRerun(coefficientValues); }}
+      >Rerun</Button>
     </div>
   );
 }
