@@ -98,15 +98,15 @@ def send_linear_coeff():
 
 @app.route('/Rerun', methods=["POST"]) 
 def adjust_coefficient():
-    models["coef_value"] = np.array(request.json["coefficients"])
+    coef_value = np.array(request.json["coefficients"])
 
     predicted = np.zeros(models["test_x"].shape[0]) 
     for i in range(models["test_x"].shape[0]): 
-        predicted[i] = np.dot(models["test_x"][i], models["coef_value"]) 
+        predicted[i] = np.dot(models["test_x"][i], coef_value) 
     
-    models["predictedPrice"] = models["label_scaler"].inverse_transform(predicted.reshape(-1,1)).reshape(-1)
+    mpredictedPrice = models["label_scaler"].inverse_transform(predicted.reshape(-1,1)).reshape(-1)
 
-    return {"predictedPrice": models["predictedPrice"].tolist()} 
+    return {"predictedPrice": mpredictedPrice.tolist()} 
 
 @app.route('/', methods=["GET"])  
 def init():   
