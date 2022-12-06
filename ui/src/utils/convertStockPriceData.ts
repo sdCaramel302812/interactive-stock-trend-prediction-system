@@ -1,14 +1,23 @@
 import TimeSeriesData from '../type/TimeSeriesData';
 
-export function convertToTimeSeriesData(price: number[], date: string[]): TimeSeriesData[] {
-  if (price.length !== date.length) {
+export function timeFormatting(date: Date): string {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  return year.toString().concat('-').concat(month.toString()).concat('-').concat((day + 1).toString());
+}
+
+export function convertToTimeSeriesData(prices: number[], dates: string[]): TimeSeriesData[] {
+  if (prices.length !== dates.length) {
     return [];
   }
+  const formattedDates = dates.map((value) => timeFormatting(new Date(value)));
+  console.log(formattedDates);
   const timeSeriesData = [];
-  for (let i of Array(price.length).fill(0).map((x, index) => index)) {
+  for (let i of Array(prices.length).fill(0).map((x, index) => index)) {
     timeSeriesData.push({
-      x: date[i],
-      y: price[i]
+      x: formattedDates[i],
+      y: prices[i]
     });
   }
   return timeSeriesData;

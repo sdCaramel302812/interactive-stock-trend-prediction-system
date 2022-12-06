@@ -3,11 +3,12 @@ import { convertToTimeSeriesData } from '../utils/convertStockPriceData';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { useRef } from 'react';
+import { timeFormatting } from '../utils/convertStockPriceData';
 
 function StockPredictionChart(priceData: StockPredictionData) {
   const ref = useRef();
   const chartData = {
-    labels: priceData.trainingDate.concat(priceData.predictedDate),
+    labels: priceData.trainingDate.concat(priceData.predictedDate).map((value) => timeFormatting(new Date(value))),
     datasets: [
       {
         label: 'training data',

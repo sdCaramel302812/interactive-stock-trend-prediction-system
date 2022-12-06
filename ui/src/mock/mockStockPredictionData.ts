@@ -1,9 +1,4 @@
-function timeFormatting(date: Date): string {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
-  return year.toString().concat('-').concat(month.toString()).concat('-').concat((day + 1).toString());
-}
+import { timeFormatting } from '../utils/convertStockPriceData';
 
 const beginDate = new Date(2010, 1);
 
