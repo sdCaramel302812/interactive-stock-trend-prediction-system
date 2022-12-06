@@ -31,77 +31,63 @@ function CoefficientChart(props: CoefficientChartProps) {
     });
   };
 
-  const getChartData = (coefficientNames: string[], coefficientValues: number[]) => {
-    return {
-      labels: coefficientNames,
-      datasets: [
-        {
-          label: 'drag to modify coefficient',
-          data: coefficientValues,
-          backgroundColor: getBackgroundColor(coefficientValues),
-          borderColor: getBorderColor(coefficientValues),
-          borderWidth: 1
-        },
-      ],
-      dragData: true
-    };
-  };
-
-  const getChartOption = () => {
-    return {
-      scale: {
-        y: {
-          max: 20,
-          min: -20
-        }
-      },
-      plugins: {
-        dragData: {
-          onDragStart: () => {},
-          onDrag: () => {},
-          onDragEnd: (e: any, datasetIndex: any, index: number, value: number) => {
-            setCoefficientValues(coefficientValues.map((oldValue, oldIndex) => {
-              if (oldIndex === index) {
-                return value;
-              }
-              return oldValue;
-            }));
-            setChartData(getChartData(coefficientNames, coefficientValues));
-          }
-        }
-      }
-    };
-  };
-
   const [coefficientNames, setCoefficientNames] = useState<string[]>([...props.coefficientData.name]);
   const [coefficientValues, setCoefficientValues] = useState<number[]>([...props.coefficientData.value]);
-  const [chartData, setChartData] = useState<any>(getChartData(coefficientNames, coefficientValues));
-  const [chartOption, setChartOption] = useState<any>(getChartOption());
+
 
   useEffect(() => {
-    setCoefficientNames([...props.coefficientData.name]);
-    setCoefficientValues([...props.coefficientData.value]);
-    setChartData(getChartData(coefficientNames, coefficientValues));
-    
-    setChartOption(getChartOption());
-  }, [props]);
+    const names = [...props.coefficientData.name];
+    const values = [...props.coefficientData.value];
+    setCoefficientNames(names);
+    setCoefficientValues(values);
+  }, []);
 
   return (
     <div>
       <Bar 
         ref={ref} 
-        data={chartData}
+        data={{
+          labels: props.coefficientData.name,
+          datasets: [
+            {
+              label: 'drag to modify coefficient',
+              data: props.coefficientData.value,
+              backgroundColor: getBackgroundColor(props.coefficientData.value),
+              borderColor: getBorderColor(props.coefficientData.value),
+              borderWidth: 1
+            },
+          ],// @ts-ignore
+          dragData: true
+        }}
         // @ts-ignore
-        options={chartOption}
+        options={{
+          scale: {
+            y: {
+              max: 20,
+              min: -20
+            }
+          },
+          plugins: {// @ts-ignore
+            dragData: {
+              onDragStart: () => {},
+              onDrag: () => {},
+              onDragEnd: (e: any, datasetIndex: any, index: number, value: number) => {
+                let newCoefficients = [...props.coefficientData.value];
+                newCoefficients[index] = value;
+                setCoefficientValues(newCoefficients);
+              }
+            }
+          }
+        }}
         style={{width: '1200px', height: '300px'}}
       />
       <Button
         style={{ marginTop: '10px' }}
         variant="contained"
         color="success"
-        onClick={() => { 
-          console.log(coefficientValues);
-          props.onRerun(coefficientValues); }}
+        onClick={() => {
+          props.onRerun(coefficientValues);
+        }}
       >Rerun</Button>
     </div>
   );

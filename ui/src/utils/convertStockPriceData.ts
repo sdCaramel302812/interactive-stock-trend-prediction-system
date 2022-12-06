@@ -12,7 +12,6 @@ export function convertToTimeSeriesData(prices: number[], dates: string[]): Time
     return [];
   }
   const formattedDates = dates.map((value) => timeFormatting(new Date(value)));
-  console.log(formattedDates);
   const timeSeriesData = [];
   for (let i of Array(prices.length).fill(0).map((x, index) => index)) {
     timeSeriesData.push({

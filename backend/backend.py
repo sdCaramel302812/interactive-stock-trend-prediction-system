@@ -98,9 +98,6 @@ def send_linear_coeff():
 
 @app.route('/Rerun', methods=["POST"]) 
 def adjust_coefficient():
-    print(request.form)
-    print(request.data)
-    print(request.json)
     models["coef_value"] = np.array(request.json["coefficients"])
 
     predicted = np.zeros(models["test_x"].shape[0]) 

@@ -16,7 +16,6 @@ const coefficientChangeApi = '/Rerun';
 
 async function get(api: string) {
   const response = await fetch(process.env.REACT_APP_BACKEND_ENDPOINT + api, {method: 'GET'});
-  console.log(response);
   return await response.json();
 }
 
@@ -73,7 +72,10 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header 
+        className="App-header"
+        style={{ paddingTop: '20px', paddingBottom: '20px' }}
+      >
         <StockPredictionChart {...stockPredictionData} />
         {coefficientData && <CoefficientChart
           coefficientData={coefficientData}
