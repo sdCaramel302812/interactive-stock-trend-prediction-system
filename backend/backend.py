@@ -1,20 +1,23 @@
-from flask import Flask, request 
+from flask import Flask, request
+from flask_cors import CORS
 from sklearn.linear_model import LinearRegression  
 from sklearn.preprocessing import MinMaxScaler 
 from tensorflow import keras 
 import math
 import numpy as np 
 import pandas as pd  
-import tensorflow as tf  
+import tensorflow as tf 
+import json 
 
 
 app = Flask(__name__)   
+CORS(app)
 
 models = { 
     "df" : None, 
 
     "train_x" : None, 
-    "trainingPrice" : None, 
+    "realPrice" : None, 
     "trainingDate" : None,  
     
     "test_x" : None,  
@@ -70,38 +73,45 @@ def getPredictionFromLSTM(training_data_len, scaled_data, scaled_label, model):
 def fit_linear_regression(): 
     linearReg = LinearRegression(fit_intercept=False)
     fittedReg = linearReg.fit(models["train_x"], models["trainingPrice"])
-    models["coef_value"] = fittedReg.coef_   
+    models["coef_value"] = fittedReg.coef_
 
     predictions = fittedReg.predict(models["test_x"]) 
-    models["predictedPrice"] = models["label_scaler"].inverse_transform(predictions.reshape(-1,1))
+    models["predictedPrice"] = models["label_scaler"].inverse_transform(predictions.reshape(-1,1)).reshape(-1)
 
 @app.route('/GetStockData', methods=["GET"])
 def predict_result(): 
+    trainingPrice = models["label_scaler"].inverse_transform(models["trainingPrice"].reshape(-1,1)).reshape(-1)
+    realPrice = models["label_scaler"].inverse_transform(models["realPrice"].reshape(-1,1)).reshape(-1)
+
+
     return {
-        "trainingPrice": models["trainingPrice"],
-        "trainingDate": models["trainingDate"], 
-        "predictedPrice": models["predictedPrice"], 
-        "preictedDate": models["predictedDate"], 
-        "realPrice": models["realPrice"]
+        "trainingPrice": trainingPrice.tolist(),
+        "trainingDate": models["trainingDate"].tolist(), 
+        "predictedPrice": models["predictedPrice"].tolist(), 
+        "predictedDate": models["predictedDate"].tolist(), 
+        "realPrice": realPrice.tolist()
     } 
 
 @app.route('/GetCoefficient', methods=["GET"]) 
 def send_linear_coeff():
-    return {"name" : models["coef_name"], "value" : models["coef_value"]}
+    return {"name" : models["coef_name"].tolist(), "value" : models["coef_value"].tolist()}
 
 @app.route('/Rerun', methods=["POST"]) 
-def adjust_coefficient(): 
-    models["coef_value"] = request.json["coefficient"] 
+def adjust_coefficient():
+    print(request.form)
+    print(request.data)
+    print(request.json)
+    models["coef_value"] = np.array(request.json["coefficients"])
 
     predicted = np.zeros(models["test_x"].shape[0]) 
     for i in range(models["test_x"].shape[0]): 
         predicted[i] = np.dot(models["test_x"][i], models["coef_value"]) 
     
-    models["predictedPrice"] = models["label_scaler"].inverse_transform(predicted.reshape(-1,1))
+    models["predictedPrice"] = models["label_scaler"].inverse_transform(predicted.reshape(-1,1)).reshape(-1)
 
-    return {"coefficient": models["coef_value"], "predictedPrice": models["predictedPrice"]} 
+    return {"predictedPrice": models["predictedPrice"].tolist()} 
 
-@app.route('/')  
+@app.route('/', methods=["GET"])  
 def init():   
     models["df"] = pd.read_pickle('../data/sp500.pkl')   
     model = keras.models.load_model('../lstm/models/best_model.h5') 

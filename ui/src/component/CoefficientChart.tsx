@@ -1,6 +1,6 @@
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'chartjs-plugin-dragdata';
 import { CoefficientData } from '../type/CoefficientData';
 import { Button } from '@mui/material';
@@ -47,27 +47,44 @@ function CoefficientChart(props: CoefficientChartProps) {
     };
   };
 
+  const getChartOption = () => {
+    return {
+      scale: {
+        y: {
+          max: 20,
+          min: -20
+        }
+      },
+      plugins: {
+        dragData: {
+          onDragStart: () => {},
+          onDrag: () => {},
+          onDragEnd: (e: any, datasetIndex: any, index: number, value: number) => {
+            setCoefficientValues(coefficientValues.map((oldValue, oldIndex) => {
+              if (oldIndex === index) {
+                return value;
+              }
+              return oldValue;
+            }));
+            setChartData(getChartData(coefficientNames, coefficientValues));
+          }
+        }
+      }
+    };
+  };
+
   const [coefficientNames, setCoefficientNames] = useState<string[]>([...props.coefficientData.name]);
   const [coefficientValues, setCoefficientValues] = useState<number[]>([...props.coefficientData.value]);
   const [chartData, setChartData] = useState<any>(getChartData(coefficientNames, coefficientValues));
+  const [chartOption, setChartOption] = useState<any>(getChartOption());
 
-  const options = {
-    scale: {
-      y: {
-        max: 20,
-        min: -20
-      }
-    },
-    plugins: {
-      dragData: {
-        onDragStart: () => {},
-        onDrag: () => {},
-        onDragEnd: () => {
-          setChartData(getChartData(coefficientNames, coefficientValues));
-        }
-      }
-    }
-  };
+  useEffect(() => {
+    setCoefficientNames([...props.coefficientData.name]);
+    setCoefficientValues([...props.coefficientData.value]);
+    setChartData(getChartData(coefficientNames, coefficientValues));
+    
+    setChartOption(getChartOption());
+  }, [props]);
 
   return (
     <div>
@@ -75,14 +92,16 @@ function CoefficientChart(props: CoefficientChartProps) {
         ref={ref} 
         data={chartData}
         // @ts-ignore
-        options={options}
-        style={{width: '800px', height: '300px'}}
+        options={chartOption}
+        style={{width: '1200px', height: '300px'}}
       />
       <Button
         style={{ marginTop: '10px' }}
         variant="contained"
         color="success"
-        onClick={() => { props.onRerun(coefficientValues); }}
+        onClick={() => { 
+          console.log(coefficientValues);
+          props.onRerun(coefficientValues); }}
       >Rerun</Button>
     </div>
   );

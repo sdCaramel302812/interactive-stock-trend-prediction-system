@@ -38,7 +38,7 @@ function StockPredictionChart(priceData: StockPredictionData) {
       <Line 
         ref={ref} 
         data={chartData}
-        style={{width: '800px', height: '300px'}}
+        style={{width: '1200px', height: '300px'}}
       />
     </div>
   );
