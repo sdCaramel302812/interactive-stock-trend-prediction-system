@@ -104,9 +104,9 @@ def adjust_coefficient():
     for i in range(models["test_x"].shape[0]): 
         predicted[i] = np.dot(models["test_x"][i], coef_value) 
     
-    mpredictedPrice = models["label_scaler"].inverse_transform(predicted.reshape(-1,1)).reshape(-1)
+    predictedPrice = models["label_scaler"].inverse_transform(predicted.reshape(-1,1)).reshape(-1)
 
-    return {"predictedPrice": mpredictedPrice.tolist()} 
+    return {"predictedPrice": predictedPrice.tolist()} 
 
 @app.route('/', methods=["GET"])  
 def init():   

@@ -39,7 +39,18 @@ function StockPredictionChart(priceData: StockPredictionData) {
       <Line 
         ref={ref} 
         data={chartData}
-        style={{width: '1200px', height: '300px'}}
+        options={{
+          maintainAspectRatio: false,// @ts-ignore
+          scale: {
+            x: {
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }
+          }
+        }}
+        style={{width: '70vw', height: '300px'}}
       />
     </div>
   );

@@ -61,6 +61,7 @@ function CoefficientChart(props: CoefficientChartProps) {
         }}
         // @ts-ignore
         options={{
+          maintainAspectRatio: false,
           scale: {
             y: {
               max: 20,
@@ -75,20 +76,13 @@ function CoefficientChart(props: CoefficientChartProps) {
                 let newCoefficients = [...props.coefficientData.value];
                 newCoefficients[index] = value;
                 setCoefficientValues(newCoefficients);
+                props.onRerun(newCoefficients);
               }
             }
           }
         }}
-        style={{width: '1200px', height: '300px'}}
+        style={{width: '70vw', height: '300px'}}
       />
-      <Button
-        style={{ marginTop: '10px' }}
-        variant="contained"
-        color="success"
-        onClick={() => {
-          props.onRerun(coefficientValues);
-        }}
-      >Rerun</Button>
     </div>
   );
 }

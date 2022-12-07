@@ -7,8 +7,11 @@ import mockCoefficientData from './mock/mockCoefficientData';
 import { Chart } from 'chart.js';
 import { ChangeCoefficientRequest, CoefficientData } from './type/CoefficientData';
 import StockPredictionData from './type/StockPredictionData';
+import SearchBar from './component/SearchBar';
+import { IconButton } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
-Chart.defaults.color = '#EEE';
+Chart.defaults.color = '#111';
 
 const predictionApi = '/GetStockData';
 const coefficientApi = '/GetCoefficient';
@@ -72,19 +75,34 @@ function App() {
 
   return (
     <div className="App">
-      <header 
+      <body 
         className="App-header"
-        style={{ paddingTop: '20px', paddingBottom: '20px' }}
       >
+        <h2>
+          Interactive Stock Price Prediction System
+        </h2>
+        <div style={{ display: 'flex', marginBottom: '20px' }}>
+          <SearchBar/>
+          <IconButton
+            type="button"
+            sx={{ p: '10px' }}
+            aria-label="refresh"
+            onClick={() => {
+              getStockPredictionData();
+              getCoefficientData();
+            }}
+          ><RefreshIcon/></IconButton>
+        </div>
         <StockPredictionChart {...stockPredictionData} />
         {coefficientData && <CoefficientChart
           coefficientData={coefficientData}
           onRerun={async (coefficientChanges: number[]) => {
-            const response = await postCoefficientChangeRequest({coefficients: coefficientChanges});
+            const newCoefficients = [...coefficientChanges];
+            const response = await postCoefficientChangeRequest({coefficients: newCoefficients});
             updatePrediction(response.predictedPrice);
           }}
         />}
-      </header>
+      </body>
     </div>
   );
 }
