@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import 'chartjs-plugin-dragdata';
 import { CoefficientData } from '../type/CoefficientData';
 import { Button } from '@mui/material';
+import coefficientDescription from '../mock/coefficientDescription';
+import { TooltipItem } from 'chart.js/auto';
 
 interface CoefficientChartProps {
   coefficientData: CoefficientData;
@@ -77,6 +79,15 @@ function CoefficientChart(props: CoefficientChartProps) {
                 newCoefficients[index] = value;
                 setCoefficientValues(newCoefficients);
                 props.onRerun(newCoefficients);
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (context: TooltipItem<'bar'>) => {
+                  //console.log(context.formattedValue);
+                  return coefficientDescription[context.label as keyof typeof coefficientDescription]
+                    + ': ' + context.formattedValue;
+                }
               }
             }
           }
